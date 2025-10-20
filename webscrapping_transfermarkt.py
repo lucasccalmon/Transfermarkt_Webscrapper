@@ -9,14 +9,10 @@ from urllib.parse import urlparse
 import re
 
 #escrever anos desejados
-years = [ "23/24", "22/23", "21/22", "20/21","19/20"]
+years = ["24/25"]
 # Adicione URLs conforme necessário
 urls = [
-    "https://www.transfermarkt.com.br/laliga/startseite/wettbewerb/ES1",
-    "https://www.transfermarkt.com.br/bundesliga/startseite/wettbewerb/L1",
-    "https://www.transfermarkt.com.br/ligue-1/startseite/wettbewerb/FR1",
-    "https://www.transfermarkt.com.br/serie-a/startseite/wettbewerb/IT1"
-    
+    "https://www.transfermarkt.com.br/premier-league/startseite/wettbewerb/GB1"
 ]
 
 #o programa dura em torno de 1min40s por ano
@@ -40,6 +36,12 @@ for url in urls:
     
         driver.switch_to.default_content()
         sleep(10)
+        #parte nova do código: fecha pop-up que pede para aceitar notificações
+        body_element = driver.find_element(By.ID, "nadzCloseDesktop")
+
+        # Clica no elemento <body><div id="nadzCloseDesktop" class="fakeHardButton1">Block</div>
+        body_element.click()
+        sleep(5)
         actions = ActionChains(driver)
         actions.send_keys(Keys.PAGE_DOWN).perform()
         sleep(5)
@@ -50,7 +52,7 @@ for url in urls:
         year_option = driver.find_element(By.XPATH, f"//ul[@class='chzn-results']/li[text()='{year}']")
         year_option.click()
         sleep(10)
-        show_button = driver.find_element(By.XPATH, "//input[@class='small button' and @value='Mostrar']")
+        show_button = driver.find_element(By.XPATH, "//input[@class='small button' and @value='Exibir']")
         show_button.click()
         sleep(10)
         page_source = driver.page_source
