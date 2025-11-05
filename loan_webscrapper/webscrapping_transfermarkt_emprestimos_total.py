@@ -15,7 +15,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 #recebe um csv com todos os times que jogaram a premier league de 2004/05 - 2024/25. 
 #link do time no transfermarkt,nome_time,id_time,temporada (e outras colunas)
-dados = pd.read_csv("times_refatorado.csv")
+dados = pd.read_csv("loan_webscrapper/times_refatorado.csv")
 
 #o código demora pouco mais de um minuto por time        
 
@@ -90,7 +90,8 @@ def hide_ad_containers(driver):
     try:
         # Usa JavaScript para encontrar todos e escondê-los de uma vez
         script = f"""
-            var adContainers = document.querySelectorAll('{seletor_containers}');
+            // Linha corrigida
+            var adContainers = document.querySelectorAll("{seletor_containers}");
             if (adContainers.length > 0) {{
                 console.log(adContainers.length + ' contêiner(s) de anúncio encontrado(s). Ocultando...');
                 adContainers.forEach(function(container) {{
@@ -208,8 +209,11 @@ for index, linha in dados.iterrows():
     actions = ActionChains(driver)
     
     #desce para mostrar os seletores e a tabela
-    actions.send_keys(Keys.PAGE_DOWN).perform()
-    sleep(5)
+    # actions.send_keys(Keys.PAGE_DOWN).perform()
+    # sleep(1)
+    # actions.send_keys(Keys.ARROW_UP).perform()
+    # actions.send_keys(Keys.ARROW_UP).perform()
+    # sleep(5)
 
 
 
@@ -222,8 +226,10 @@ for index, linha in dados.iterrows():
     hide_ad_containers(driver)
     
     #acha o botão seletor de ano
-    year_button = driver.find_element(By.CSS_SELECTOR, 'a[href="javascript:void(0)"]')
-    year_button.click()
+    year_button = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="javascript:void(0)"]')))
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", year_button) # Rolagem precisa
+    WebDriverWait(driver, 15).until(EC.element_to_be_clickable(year_button)).click()
+    
     sleep(5)
     
     #seleciona o ano baseado na temporada que o time x jogou a premier
@@ -301,7 +307,8 @@ for index, linha in dados.iterrows():
                 nacionalidade = ', '.join(nacionalidades)
                 # Célula 3: Time
                 celula_time = tdtr[3]
-                timeEmprestado = celula_time.find('td', class_='hauptlink').a.get_text(strip=True)
+                timeEmprestado = celula_time.find('td', class_='hauptlink').a.get('href')
+                print(timeEmprestado)
 
                 # Célula 4: Início do Empréstimo
                 inicioEmp = tdtr[4].get_text(strip=True)
@@ -348,7 +355,7 @@ for index, linha in dados.iterrows():
     
 #após código rodar, cria a tabela
 sleep(5)
-csv_filename = f'dados_emprestimo_premier.csv'
+csv_filename = f'dados_emprestimo_premierv2.csv'
 
 
 with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
