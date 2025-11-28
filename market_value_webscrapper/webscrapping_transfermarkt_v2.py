@@ -166,7 +166,7 @@ def wait_and_remove_ad_containers(driver, timeout=5):
 
 
 #escrever anos desejados
-years = ["2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"]
+years = ["2004","2005","2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"]
 
 # Adicione URLs conforme necessário
 urls = [
@@ -247,8 +247,8 @@ for url in urls:
         # Extrai o caminho da URL
         path = urlparse(url).path
         # Usa uma expressão regular para encontrar a parte com o nome da liga
-        match = re.search(r'/([^/]+)/', path)
-        csv_filename = f'dadosv2/dadosv2_{match.group(1)}_{year}.csv'
+        match = re.search(r'/([^/]+)/startseite/wettbewerb/([^/]+)$', path)
+        csv_filename = f'dados_times_ligas/dadosv2_{match.group(1)}_{match.group(2)}_{year}.csv'
     
         with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
